@@ -34,12 +34,12 @@ taskRouter.post('/', verifyToken, async (req, res) => {
 taskRouter.put('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, completed } = req.body;
+    const { completed } = req.body;
     const userId = req.user.id;
 
     const task = await Task.findOneAndUpdate(
       { _id: id, userId },
-      { name, completed },
+      { completed },
       { new: true }
     );
 

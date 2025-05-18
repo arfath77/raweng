@@ -1,49 +1,46 @@
-import '@mantine/core/styles.css';
-
-import { Container, MantineProvider } from '@mantine/core';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import { Dashboard } from './components/Dashboard';
+import { Login } from './components/Login';
+import { Register } from './components/Register';
+import { Header } from './components/Header';
 import { useState } from 'react';
-import { getToken, removeToken } from './utils';
-import { useEffect } from 'react';
-import API from './api';
-import TaskList from './components/TaskList';
-import LoginForm from './components/Login';
-import RegisterForm from './components/Register';
+import { getToken } from './utils';
+import { Store } from './context';
+
+function Layout({ children }) {
+  return (
+    <>
+      <Header />
+      {children}
+    </>
+  );
+}
 
 function App() {
-  const [tasks, setTasks] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(!!getToken());
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      API.get('/tasks')
-        .then(res => setTasks(res.data))
-        .catch(() => setIsAuthenticated(false));
-    }
-  }, [isAuthenticated]);
-
-  const logout = () => {
-    removeToken();
-    setIsAuthenticated(false);
+  const value = {
+    isAuthenticated,
+    setIsAuthenticated,
   };
 
   return (
-    <MantineProvider>
-      <Container>
-        {isAuthenticated ? (
-          <>
-            <button onClick={logout}>Logout</button>
-            <h1>Your Tasks</h1>
-            {/* <TaskForm onTaskAdded={task => setTasks(prev => [...prev, task])} /> */}
-            <TaskList tasks={tasks} setTasks={setTasks} />
-          </>
-        ) : (
-          <>
-            <LoginForm onLogin={() => setIsAuthenticated(true)} />
-            <RegisterForm />
-          </>
-        )}
-      </Container>
-    </MantineProvider>
+    <Router>
+      <Store.Provider value={value}>
+        <Layout />
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </Store.Provider>
+    </Router>
   );
 }
 

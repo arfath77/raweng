@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import API from '../api';
+import { Form } from './Form';
 
-export default function RegisterForm() {
+export const Register = () => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
 
   const handleRegister = async e => {
@@ -17,20 +19,32 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleRegister}>
-      <h2>Register</h2>
-      <input
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        type="password"
-        placeholder="Password"
-      />
-      <button type="submit">Register</button>
-    </form>
+    <Form
+      formType={'register'}
+      handleSubmit={handleRegister}
+      fields={[
+        {
+          name: 'name',
+          value: name,
+          setValue: setName,
+          type: 'text',
+          placeholder: 'Name',
+        },
+        {
+          name: 'email',
+          value: email,
+          setValue: setEmail,
+          type: 'email',
+          placeholder: 'Email',
+        },
+        {
+          name: 'password',
+          value: password,
+          setValue: setPassword,
+          type: 'password',
+          placeholder: 'Password',
+        },
+      ]}
+    />
   );
-}
+};

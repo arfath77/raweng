@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import API from '../api';
 import { saveToken } from '../utils';
+import { Form } from './Form';
+import { redirect } from 'react-router-dom';
 
-export default function LoginForm({ onLogin }) {
+export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -11,28 +13,33 @@ export default function LoginForm({ onLogin }) {
     try {
       const res = await API.post('/auth/login', { email, password });
       saveToken(res.data.token);
-      onLogin();
+      redirect('/dashboard');
     } catch (err) {
       console.log(err);
-      alert('Login failed');
+      alert('Login failed: ' + err.message);
     }
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <h2>Login</h2>
-      <input
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        type="password"
-        placeholder="Password"
-      />
-      <button type="submit">Login</button>
-    </form>
+    <Form
+      formType={'login'}
+      handleSubmit={handleLogin}
+      fields={[
+        {
+          name: 'email',
+          value: email,
+          setValue: setEmail,
+          type: 'email',
+          placeholder: 'Email',
+        },
+        {
+          name: 'password',
+          value: password,
+          setValue: setPassword,
+          type: 'password',
+          placeholder: 'Password',
+        },
+      ]}
+    />
   );
-}
+};
