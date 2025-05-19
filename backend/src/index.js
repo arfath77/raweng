@@ -10,7 +10,7 @@ import userRouter from './routes/user.js';
 const app = express();
 dotenv.config();
 
-app.use(cors());
+app.use(cors('http://localhost:5173'));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

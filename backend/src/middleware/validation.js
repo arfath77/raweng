@@ -1,6 +1,8 @@
 import zod from 'zod';
 import User from '../models/user.js';
 import Session from '../models/session.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const registerSchema = zod.object({
   name: zod
@@ -22,15 +24,15 @@ const registerSchema = zod.object({
 });
 
 export const validateRegister = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
 
-  if (!email || !password) {
+  if (!email || !password || !name) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const { success, error } = registerSchema.parse({ email, password });
-  if (!success) {
-    return res.status(400).json({ message: error.errors[0].message });
+  const { error } = registerSchema.parse({ email, password, name });
+  if (error) {
+    return res.status(400).json({ message: error?.message });
   }
 
   next();
@@ -51,33 +53,32 @@ export const validateLogin = async (req, res, next) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const { success, error } = loginSchema.parse({ email, password });
-  if (!success) {
-    return res.status(400).json({ message: error.errors[0].message });
+  const { error } = loginSchema.parse({ email, password });
+  if (error) {
+    return res.status(400).json({ message: error?.message });
   }
 
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(401).json({ message: 'No account exists' });
   }
-  if (bcrypt.compareSync(password, user.password)) {
+  if (!bcrypt.compareSync(password, user.password)) {
     return res.status(401).json({ message: 'Invalid email or password' });
   }
   req.user = user;
-
   next();
 };
 
 export const verifyToken = async (req, res, next) => {
   const authorization = req.headers['authorization'];
   const bearer = authorization.split(' ');
-  token = bearer[1];
+  const token = bearer[1];
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }
 
   try {
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const session = await Session.findOne({ token });
     if (!session) {
       return res.status(401).json({ message: 'Invalid token' });

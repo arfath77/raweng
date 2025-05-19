@@ -37,12 +37,13 @@ authRouter.post('/register', validateRegister, async (req, res) => {
   }
 });
 
-authRouter.post('/login', validateLogin, (req, res) => {
+authRouter.post('/login', validateLogin, async (req, res) => {
   try {
     const user = req.user;
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
+    await Session.create({ token });
     return res.status(200).json({
       user: {
         id: user._id,

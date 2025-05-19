@@ -1,0 +1,20 @@
+# Project Title
+
+Todo List
+
+## Installation
+
+```bash
+git clone https://github.com/arfath77/raweng.git
+cd raweng
+cd backend
+pnpm i
+pnpm run dev
+cd frontend
+pnpm i
+pnpm run dev
+```
+
+## run mongodb on local
+
+refer: https://www.prisma.io/dataguide/mongodb/setting-up-a-local-mongodb-database#debian-and-ubuntu

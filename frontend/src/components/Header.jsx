@@ -9,13 +9,14 @@ import {
   Image,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useContext } from 'react';
 import { Store } from '../context';
 import { removeToken } from '../utils';
 
 export function Header() {
+  const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useContext(Store);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
@@ -23,9 +24,8 @@ export function Header() {
   const logout = () => {
     removeToken();
     setIsAuthenticated(false);
+    navigate('/login');
   };
-
-  console.log({ isAuthenticated }, 'from header');
 
   return (
     <Box>

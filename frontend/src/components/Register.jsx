@@ -10,7 +10,7 @@ export const Register = () => {
   const handleRegister = async e => {
     e.preventDefault();
     try {
-      await API.post('/auth/register', { email, password });
+      await API.post('/register', { email, password, name });
       alert('Registered! You can now log in.');
     } catch (err) {
       console.log(err);

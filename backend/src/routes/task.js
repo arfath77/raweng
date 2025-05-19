@@ -18,7 +18,7 @@ taskRouter.get('/', verifyToken, async (req, res) => {
 taskRouter.post('/', verifyToken, async (req, res) => {
   try {
     const { name } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     const newTask = await Task.create({
       name,
@@ -35,7 +35,7 @@ taskRouter.put('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { completed } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     const task = await Task.findOneAndUpdate(
       { _id: id, userId },
@@ -56,7 +56,7 @@ taskRouter.put('/:id', verifyToken, async (req, res) => {
 taskRouter.delete('/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     const task = await Task.findOneAndDelete({ _id: id, userId });
 

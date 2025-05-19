@@ -2,23 +2,31 @@ import { useState } from 'react';
 import API from '../api';
 import { saveToken } from '../utils';
 import { Form } from './Form';
-import { redirect } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { Store } from '../context';
 
 export const Login = () => {
+  const { isAuthenticated } = useContext(Store);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async e => {
     e.preventDefault();
     try {
-      const res = await API.post('/auth/login', { email, password });
+      const res = await API.post('/login', { email, password });
       saveToken(res.data.token);
-      redirect('/dashboard');
+      navigate('/dashboard');
     } catch (err) {
       console.log(err);
       alert('Login failed: ' + err.message);
     }
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />;
+  }
 
   return (
     <Form
